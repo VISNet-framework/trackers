@@ -48,6 +48,7 @@ trackers = "trackers.scripts.__main__:main"
 
 [dependency-groups]
 dev = [
+    "ruff>=0.15.0",
     "uv>=0.4.20",
     "pytest>=8.3.3",
     "ruff>=0.6.9",
