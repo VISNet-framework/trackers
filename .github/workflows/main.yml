@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - 'wur_devel'  # Activate on all branches
+      - 'wur_devel'  # Only triggers on pull requests to wur_devel branch
 
 jobs:
   build:
