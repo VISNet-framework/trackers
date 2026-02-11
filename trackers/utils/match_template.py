@@ -232,23 +232,27 @@ if __name__=="__main__":
     name_1 = indir / "437.png"
     name_2 = indir / "438.png"
 
-    bgr_img1 = cv2.imread(str(name_1), cv2.IMREAD_GRAYSCALE)
-    bgr_img2 = cv2.imread(str(name_2), cv2.IMREAD_GRAYSCALE)
+    movement="x-axis"
+    direction="increase"
 
-    # # Rotate both images counter clockwise 90 degrees
-    bgr_img1 = cv2.rotate(bgr_img1, cv2.ROTATE_90_CLOCKWISE)
-    bgr_img2 = cv2.rotate(bgr_img2, cv2.ROTATE_90_CLOCKWISE)
+    def read_data():
+        bgr_img1 = cv2.imread(str(name_1), cv2.IMREAD_GRAYSCALE)
+        bgr_img2 = cv2.imread(str(name_2), cv2.IMREAD_GRAYSCALE)
 
-    direction = "decrease"
-    # direction = "increase"
+        # # Rotate both images counter clockwise 90 degrees
+        bgr_img1 = cv2.rotate(bgr_img1, cv2.ROTATE_90_CLOCKWISE)
+        bgr_img2 = cv2.rotate(bgr_img2, cv2.ROTATE_90_CLOCKWISE)
+        return bgr_img1, bgr_img2
+
+
     gt = -46
     if direction=="increase":
         gt = 46
-        bgr_img2  = cv2.imread(str(name_1), cv2.IMREAD_GRAYSCALE)
-        bgr_img1 = cv2.imread(str(name_2), cv2.IMREAD_GRAYSCALE)
+        bgr_img2, bgr_img1 = read_data()
+    else:
+        bgr_img1, bgr_img2 = read_data()
 
-    movement = "y-axis"
-    movement = "x-axis"
+
     starting_roi_xyxy = [40, 300,375, 800]
     if movement=="x-axis":
         starting_roi_xyxy = [300, 40, 800, 375]
@@ -263,4 +267,4 @@ if __name__=="__main__":
                                            movement=movement,
                                            direction=direction
     )
-    print(shift_y, "GT:",gt)
+    assert shift_y==gt
