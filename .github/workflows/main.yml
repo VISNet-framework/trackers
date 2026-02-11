@@ -42,7 +42,7 @@ jobs:
     # integration tests run in seperate workflow
     - name: Test with pytest
       run: |
-        pytest tests
+        pytest test
 
   # Check for security-issues
   trivy-scan:
