@@ -9,6 +9,21 @@
     <img width="200" src="https://raw.githubusercontent.com/roboflow/trackers/refs/heads/main/docs/assets/logo-trackers-violet.svg" alt="trackers logo">
 </div>
 
+
+# README GAR:
+This is a customised version of the roboflow tracker github:
+changes:
+- Added GAR supervision dependency for Darwin etc
+- Created a CustomSortTracker which works with an input shift
+- Added custom example in GAR_example see ```main_example_gar.py```
+
+
+# original README 
+
+
+
+
+
 Trackers gives you clean, modular re-implementations of leading multi-object tracking algorithms released under the permissive Apache 2.0 license. You combine them with any detection model you already use.
 
 https://github.com/user-attachments/assets/eef9b00a-cfe4-40f7-a495-954550e3ef1f
