@@ -18,7 +18,7 @@ tracker = CustomSORTTracker(
     minimum_iou_threshold=0.2 # for demo low
 )
 
-main_folder = Path("data/belt_tulip/")
+main_folder = Path("test/data/belt_tulip/")
 
 input_files = natsort.natsorted(main_folder.glob("*.json"))
 

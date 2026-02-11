@@ -14,7 +14,8 @@ def test_match_template():
 
 def match(movement, direction):
 
-    indir = Path(__file__).parent / "../../data/belt_tulip"
+    indir = Path(__file__).parent / "data/belt_tulip"
+    indir.resolve()
     name_1 = indir / "437.png"
     name_2 = indir / "438.png"
 
