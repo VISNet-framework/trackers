@@ -42,11 +42,6 @@ dependencies = [
 
 [project.optional-dependencies]
 cli = ["rich>=13.0.0"]
-
-[project.scripts]
-trackers = "trackers.scripts.__main__:main"
-
-[dependency-groups]
 dev = [
     "uv>=0.4.20",
     "pytest>=8.3.3",
@@ -54,6 +49,11 @@ dev = [
     "mypy>=1.15.0",
     "pre-commit>=4.2.0",
 ]
+[project.scripts]
+trackers = "trackers.scripts.__main__:main"
+
+[dependency-groups]
+
 docs = [
     "mkdocs>=1.6.1",
     "mkdocs-glightbox>=0.4.0",

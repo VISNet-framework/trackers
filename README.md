@@ -17,7 +17,6 @@ changes:
 - Created a CustomSortTracker which works with an input shift
 - Added custom example in GAR_example see ```main_example_gar.py```
 
-
 # original README 
 
 
