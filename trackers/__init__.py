@@ -5,8 +5,7 @@
 # ------------------------------------------------------------------------
 
 from trackers.core.bytetrack.tracker import ByteTrackTracker
-from trackers.core.sort.tracker import SORTTracker
 from trackers.core.custom_sort.tracker import CustomSORTTracker
-
+from trackers.core.sort.tracker import SORTTracker
 
 __all__ = ["ByteTrackTracker", "SORTTracker"]

@@ -3,18 +3,17 @@ Script to estimate shift. Copied from:
 https://github.com/roel-klein/stitchem
 """
 
-import numpy as np
-import numpy.typing as npt
-
 import warnings
 
 import cv2
+import numpy as np
+import numpy.typing as npt
 
 
 def estimate_vertical_shift_match_template(
-        bottom_incoming_image : npt.NDArray, 
-        top_stitched_image: npt.NDArray, 
-        starting_roi_xyxy: list[int], 
+        bottom_incoming_image : npt.NDArray,
+        top_stitched_image: npt.NDArray,
+        starting_roi_xyxy: list[int],
         max_shift : int,
         method = cv2.TM_CCOEFF):
 
@@ -27,23 +26,23 @@ def estimate_vertical_shift_match_template(
     return pixelshift*-1, res
 
 def estimate_shift_match_template(
-        bottom_incoming_image : npt.NDArray, 
-        top_stitched_image: npt.NDArray, 
-        starting_roi_xyxy: list[int], 
+        bottom_incoming_image : npt.NDArray,
+        top_stitched_image: npt.NDArray,
+        starting_roi_xyxy: list[int],
         max_shift : int,
         method = cv2.TM_CCOEFF,
         movement: str = "y-axis", # or x-axis
         direction: str = "decrease" # decrease
     ) -> tuple[int, npt.NDArray]:
     """
-    Estimates the vertical shift in pixels from top_stitched_image to bottom_incoming_image.
+    Estimates the shift in pixels from top_stitched_image to bottom_incoming_image.
     Arguments:
         - bottom_incoming_image : shifted image to align, grayscale np.uint8
         - top_stitched_image : starting image to align with, grayscale np.uint8
-        - starting_roi_xyxy: bounding box of the bottom_stitched_image to use for alignment
+        - starting_roi_xyxy: bounding box of the bottom_stitched_image to use for align.
         - max_shift : maximum vertical shift in pixels
     Returns:
-        pixelshift : Estimated number pixels of that should be added from incoming image. 
+        pixelshift : Estimated number pixels of that should be added from incoming image
         errors : For each pixelshift, the sum of the MAE.
     """
     roi_x1 = starting_roi_xyxy[0]
@@ -67,7 +66,7 @@ def estimate_shift_match_template(
             )
             # further shift starting roi y-position if necessary
             # to make sure we can look at the max_shift pixels before it
-            roi_y2 += max_shift_y - roi_y1     
+            roi_y2 += max_shift_y - roi_y1
             roi_y1 += max_shift_y - roi_y1
             if roi_y2 > height:
                 raise RuntimeError("Bounding box exceeded image border, reduce max "
@@ -102,7 +101,7 @@ def estimate_shift_match_template(
                                    "shift or roi box size")
 
         # convert roi indices to be negative, relative to image end
-        # this way we can use the same roi indices for a longer stitched image 
+        # this way we can use the same roi indices for a longer stitched image
         # and a shorter incoming image
         roi_x1 -= bottom_incoming_image.shape[1]
         roi_x2 -= bottom_incoming_image.shape[1]
@@ -112,7 +111,6 @@ def estimate_shift_match_template(
 
     if direction=="decrease":
         # Apply template Matching
-        # search = bottom_incoming_image[roi_y1:roi_y2+max_shift_y, roi_x1:roi_x2-max_shift_x]
         search = bottom_incoming_image[roi_y1-max_shift_y:roi_y2,
                                        roi_x1-max_shift_x:roi_x2]
         index_order = -1
@@ -188,7 +186,7 @@ def estimate_vertical_shift_match_template_twostage(
                                "roi box size")
 
     # convert roi indices to be negative, relative to image end
-    # this way we can use the same roi indices for a longer stitched image 
+    # this way we can use the same roi indices for a longer stitched image
     # and a shorter incoming image
     roi_y1 -= bottom_incoming_image.shape[0]
     roi_y2 -= bottom_incoming_image.shape[0]
@@ -267,4 +265,3 @@ if __name__=="__main__":
                                            movement=movement,
                                            direction=direction
     )
-    assert shift_y==gt
