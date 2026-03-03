@@ -19,6 +19,7 @@ tracker = CustomSORTTracker(
 )
 
 main_folder = Path("test/data/belt_tulip/")
+main_folder = Path("/home/agro/w-drive-vision/GARdata/new_format/3710485404_bollennpplkoen/datasets/videos/frames_and_detections/")
 
 input_files = natsort.natsorted(main_folder.glob("*.json"))
 
@@ -30,7 +31,9 @@ mask_annotator = sv.MaskAnnotator()
 START = sv.Point(550, 432)
 END = sv.Point(550, 0)
 
-line_zone = sv.LineZone(start=START, end=END)
+line_zone = sv.LineZone(start=START, end=END
+                        , minimum_crossing_threshold=2,
+                        triggering_anchors=[sv.Position.CENTER])
 
 line_zone_annotator = sv.LineZoneAnnotator(
     thickness=1,
@@ -66,6 +69,7 @@ for i, annot_name in enumerate(input_files):
                                             movement="x-axis", # or x-axis
                                             direction= "decrease" # decrease
         )
+        # shift = 0
 
         print("calculated shift", shift, annot_name.name)
 
@@ -88,19 +92,20 @@ for i, annot_name in enumerate(input_files):
                                                detections,
                                                labels=detections.tracker_id)
 
-    line_zone.trigger(detections)
+    if shift!=0:
+        line_zone.trigger(detections)
     line_zone_annotator.annotate(annotated_frame, line_counter=line_zone)
 
     cv2.imshow("CustomFilter", annotated_frame)
-    if cv2.waitKey(1000) & 0xFF == ord("q"):
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
     # # Initialize video writer on first frame
     # if i == 0:
     #     height, width = annotated_frame.shape[:2]
     #     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        # out = cv2.VideoWriter('output/annotated_video.mp4', fourcc, 20.0,
-        #       (width, height))
+    #     out = cv2.VideoWriter('output/default.mp4', fourcc, 20.0,
+    #           (width, height))
 
     # # Write the frame to video
     # out.write(annotated_frame)
