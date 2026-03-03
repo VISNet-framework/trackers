@@ -54,10 +54,7 @@ dev = [
     "pytest>=8.3.3",
     "pre-commit>=4.2.0",
 ]
-[project.scripts]
-trackers = "trackers.scripts.__main__:main"
 
-[dependency-groups]
 
 docs = [
     "mkdocs>=1.6.1",
