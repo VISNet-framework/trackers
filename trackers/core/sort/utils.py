@@ -77,6 +77,84 @@ def get_iou_matrix(
     return iou_matrix
 
 
+def get_iou_matrix_3d(
+    trackers: Sequence[KalmanBoxTrackerType], detection_boxes: np.ndarray
+) -> np.ndarray:
+    """
+    Build IOU cost matrix between detections and predicted 3D bounding boxes.
+
+    Args:
+        trackers: List of KalmanBoxTracker objects.
+        detection_boxes: Detected bounding boxes in the
+            form [x1, y1, z1, x2, y2, z2].
+
+    Returns:
+        IOU cost matrix.
+    """
+    predicted_boxes = np.array([t.get_state_bbox() for t in trackers])
+    if len(predicted_boxes) == 0 and len(trackers) > 0:
+        predicted_boxes = np.zeros((len(trackers), 6), dtype=np.float32)
+
+    if len(trackers) > 0 and len(detection_boxes) > 0:
+        # predicted_boxes: (N, 6), detection_boxes: (M, 6)
+        p = predicted_boxes[:, np.newaxis, :]  # (N, 1, 6)
+        d = detection_boxes[np.newaxis, :, :]  # (1, M, 6)
+
+        inter_x = np.maximum(0.0, np.minimum(p[..., 3], d[..., 3]) - np.maximum(p[..., 0], d[..., 0]))
+        inter_y = np.maximum(0.0, np.minimum(p[..., 4], d[..., 4]) - np.maximum(p[..., 1], d[..., 1]))
+        inter_z = np.maximum(0.0, np.minimum(p[..., 5], d[..., 5]) - np.maximum(p[..., 2], d[..., 2]))
+        intersection = inter_x * inter_y * inter_z  # (N, M)
+
+        vol_p = (
+            (predicted_boxes[:, 3] - predicted_boxes[:, 0])
+            * (predicted_boxes[:, 4] - predicted_boxes[:, 1])
+            * (predicted_boxes[:, 5] - predicted_boxes[:, 2])
+        )  # (N,)
+        vol_d = (
+            (detection_boxes[:, 3] - detection_boxes[:, 0])
+            * (detection_boxes[:, 4] - detection_boxes[:, 1])
+            * (detection_boxes[:, 5] - detection_boxes[:, 2])
+        )  # (M,)
+
+        union = vol_p[:, np.newaxis] + vol_d[np.newaxis, :] - intersection  # (N, M)
+        iou_matrix = np.where(union > 0, intersection / union, 0.0).astype(np.float32)
+    else:
+        iou_matrix = np.zeros((len(trackers), len(detection_boxes)), dtype=np.float32)
+
+    return iou_matrix
+
+
+def get_distance_matrix_3d(
+    trackers: Sequence[KalmanBoxTrackerType], detection_boxes: np.ndarray
+) -> np.ndarray:
+    """
+    Build Euclidean distance cost matrix between detections and predicted 3D
+    bounding box centers.
+
+    Args:
+        trackers: List of KalmanBoxTracker objects.
+        detection_boxes: Detected bounding boxes in the
+            form [x1, y1, z1, x2, y2, z2].
+
+    Returns:
+        Distance cost matrix of shape (N trackers, M detections).
+    """
+    predicted_boxes = np.array([t.get_state_bbox() for t in trackers])
+    if len(predicted_boxes) == 0 and len(trackers) > 0:
+        predicted_boxes = np.zeros((len(trackers), 6), dtype=np.float32)
+
+    if len(trackers) > 0 and len(detection_boxes) > 0:
+        pred_centers = (predicted_boxes[:, :3] + predicted_boxes[:, 3:]) / 2.0  # (N, 3)
+        det_centers = (detection_boxes[:, :3] + detection_boxes[:, 3:]) / 2.0   # (M, 3)
+        # Squared differences: (N, 1, 3) - (1, M, 3) -> (N, M, 3)
+        diff = pred_centers[:, np.newaxis, :] - det_centers[np.newaxis, :, :]
+        distance_matrix = np.sqrt((diff ** 2).sum(axis=-1)).astype(np.float32)  # (N, M)
+    else:
+        distance_matrix = np.zeros((len(trackers), len(detection_boxes)), dtype=np.float32)
+
+    return distance_matrix
+
+
 def update_detections_with_track_ids(
     trackers: Sequence[KalmanBoxTrackerType],
     detections: sv.Detections,

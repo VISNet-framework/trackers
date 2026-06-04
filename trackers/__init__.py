@@ -17,6 +17,8 @@ from trackers.motion.transformation import (
 )
 from trackers.utils.converters import xcycsr_to_xyxy, xyxy_to_xcycsr
 from trackers.core.custom_sort.tracker import CustomSORTTracker
+from trackers.core.custom_sort3D.tracker import CustomSORT3DTracker
+
 
 __all__ = [
     "ByteTrackTracker",
